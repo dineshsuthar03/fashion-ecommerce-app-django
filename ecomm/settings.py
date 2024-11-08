@@ -147,14 +147,16 @@ WSGI_APPLICATION = 'ecomm.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'djangoecommerceapp',  # Name of your database
-        'USER': 'root',  # Your MySQL username
-        'PASSWORD': 'dinesh',  # Your MySQL password
-        'HOST': 'localhost',  # Set to your MySQL server address (localhost if on the same machine)
-        'PORT': '3306',  # Default MySQL port
+        'NAME': config('DB_NAME'),  # Read the database name from the .env file
+        'USER': config('DB_USER'),  # Read the MySQL username from the .env file
+        'PASSWORD': config('DB_PASSWORD'),  # Read the MySQL password from the .env file
+        'HOST': config('DB_HOST', default='localhost'),  # Read the MySQL host from the .env file, default to 'localhost'
+        'PORT': config('DB_PORT', default=3306, cast=int),  # Read the MySQL port from the .env file, default to 3306
     }
 }
 
