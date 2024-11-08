@@ -59,7 +59,6 @@ def login_page(request):
 
     return render(request, 'accounts/login.html')
 
-
 def register_page(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -68,13 +67,17 @@ def register_page(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        user_obj = User.objects.filter(username=username, email=email)
-
-        if user_obj.exists():
-            messages.info(request, 'Username or email already exists!')
+        # Check if username already exists
+        if User.objects.filter(username=username).exists():
+            messages.info(request, 'Username already exists!')
             return HttpResponseRedirect(request.path_info)
 
-        # if user not registered
+        # Check if email already exists
+        if User.objects.filter(email=email).exists():
+            messages.info(request, 'Email already exists!')
+            return HttpResponseRedirect(request.path_info)
+
+        # Create user if not registered
         user_obj = User.objects.create(
             username=username, first_name=first_name, last_name=last_name, email=email)
         user_obj.set_password(password)
