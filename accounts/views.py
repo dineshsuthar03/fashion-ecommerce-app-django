@@ -3,7 +3,7 @@ import uuid
 import razorpay
 import os
 
-# from weasyprint import CSS, HTML
+from weasyprint import CSS, HTML
 from products.models import *
 from django.urls import reverse
 from django.conf import settings
@@ -277,11 +277,10 @@ def render_to_pdf(template_src, context_dict={}):
     ]
 
     # # Create CSS objects for each file
-    # css_objects = [CSS(filename=css_file) for css_file in css_files]
+    css_objects = [CSS(filename=css_file) for css_file in css_files]
 
     # # Convert HTML to PDF with all CSS stylesheets applied
-    # pdf_file = HTML(string=html).write_pdf(stylesheets=css_objects)
-    pdf_file =''
+    pdf_file = HTML(string=html).write_pdf(stylesheets=css_objects)
     response = HttpResponse(pdf_file, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="invoice_{context_dict["order"].order_id}.pdf"'
 
