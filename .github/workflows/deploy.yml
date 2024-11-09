@@ -1,0 +1,55 @@
+name: Deploy to Production Server
+
+# Trigger the workflow on push to the main branch
+on:
+  push:
+    branches:
+      - main  # Trigger deployment when changes are pushed to the main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu image for the runner
+
+    steps:
+      # Step 1: Check out the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'  # Use your preferred Python version
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: |
+          python3 -m venv venv
+          source venv/bin/activate
+          pip3 install -r requirements.txt
+
+      # # Step 4: Run tests (optional but recommended)
+      # - name: Run tests
+      #   run: |
+      #     source venv/bin/activate
+      #     python manage.py test
+
+      # Step 5: Deploy to production server (via SSH)
+      - name: Deploy to Production Server
+        env:
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}  # Set up your private key as a GitHub secret
+          SERVER_IP: ${{ secrets.SERVER_IP }}      # Set up your server's IP as a GitHub secret
+          USERNAME: ${{ secrets.SERVER_USERNAME }} # Set up your server's username as a GitHub secret
+        run: |
+          echo "$PRIVATE_KEY" > private_key.pem
+          chmod 600 private_key.pem
+          ssh -o StrictHostKeyChecking=no -i private_key.pem $USERNAME@$SERVER_IP <<EOF
+            cd /home/ubuntu/workspace/fashion-ecommerce-app-django
+            git pull origin main  # Pull the latest code from the main branch
+            source venv/bin/activate
+            pip3 install -r requirements.txt
+            python manage.py migrate  # Apply database migrations
+            python manage.py collectstatic --noinput  # Collect static files
+            sudo systemctl restart ecomm  # Restart Gunicorn service
+            sudo systemctl restart nginx  # Restart Nginx to apply changes
+          EOF
