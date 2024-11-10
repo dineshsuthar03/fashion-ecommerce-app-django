@@ -1,6 +1,8 @@
 Django E-Commerce Project
 This is a Django-based eCommerce platform, allowing users to browse products, make purchases, and manage accounts with Google login and Razorpay payment integration.
 
+
+URL - http://shop.dineshsuthar.com/
 Features:
 User registration and authentication (via Google).
 Product catalog and filtering.
