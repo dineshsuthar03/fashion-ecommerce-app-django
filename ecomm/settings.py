@@ -27,7 +27,7 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", "").split(",")
 
 
 # Application definition
@@ -243,7 +243,7 @@ SOCIALACCOUNT_LOGIN_ON_GET = True
 
 
 
-APP_BASE_URL = os.getenv('APP_BASE_URL')
+APP_BASE_URL = config('APP_BASE_URL')
 
 
 
